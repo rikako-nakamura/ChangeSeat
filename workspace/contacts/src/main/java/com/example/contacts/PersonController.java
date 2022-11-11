@@ -4,19 +4,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org. springframework. web. bind. annotation. RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import com.example.contacts.models.Person;
 
 @Controller
 public class PersonController {
 
   @GetMapping("/")
-  public String index(){
+  public String index(@ModelAttribute Person person){
     return "person/index";
   }
 
   @PostMapping("/create")
-  public String create(@RequestParam String name, Model model){
-  model.addAttribute("name", name);
+  public String create(@ModelAttribute Person person){
   return "person/create";
   }
 }
