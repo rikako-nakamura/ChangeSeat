@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.contacts.models.Person;
@@ -37,6 +38,12 @@ public class PersonController {
       return "person/index";
     }
     repository.saveAndFlush(person);
+    return "redirect:/";
+  }
+
+  @GetMapping("/delete/{id}")//初期データの投入
+  public String remove(@PathVariable long id){
+    repository.deleteById(id);
     return "redirect:/";
   }
 
