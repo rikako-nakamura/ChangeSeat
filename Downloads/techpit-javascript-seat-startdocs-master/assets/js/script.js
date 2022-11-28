@@ -1,7 +1,6 @@
-let timer;
-let studentNumberList = [];
 
-const setTargetStudents = function(studentNumber){
+const setTargetStudents = (studentNumber)=>{
+  let studentNumberList = [];
   for(let i = 1; i <= studentNumber;i++){
     studentNumberList.push(i);
   }
@@ -10,29 +9,33 @@ const setTargetStudents = function(studentNumber){
     return parseInt(item);
   });
 
-  studentNumberList = studentNumberList.filter(function(student){
+  studentNumberList = studentNumberList.filter((student)=>{
     return !splitedAbsenteeNumbers.includes(student);
   })
+
+  return studentNumberList;
 }
 
-const shuffleArray = function(){
+const shuffleArray = (studentNumberList)=>{
   for(let i = studentNumberList.length; i > 0; i--){
     const randomNum = Math.floor(Math.random() * i);
     let tmp = studentNumberList[i - 1];
     studentNumberList[i - 1] = studentNumberList[randomNum];
     studentNumberList[randomNum] = tmp;
   }
+
+  return studentNumberList;
 }
 
-const showSeatBoxes = function(){
+const showSeatBoxes = (shuffleStudent)=>{
   let insertHTML = '';
-  studentNumberList.forEach(function(num){
-    insertHTML += '<div class="seat__item">' + num + '</div>';
+  shuffleStudent.forEach(function(num){
+    insertHTML += `<div class="seat__item">${num}</div>`;
   })
   document.querySelector('#seat').innerHTML = insertHTML;
 }
 
-const soundPlay = function(){
+const soundPlay = (timer)=>{
   const audioElement = new Audio();
   audioElement.src = 'assets/audio/drum.mp3';
   audioElement.play();
@@ -42,25 +45,27 @@ const soundPlay = function(){
   })
 }
 
-document.querySelector('#btn-start').addEventListener('click', function(){
+document.querySelector('#btn-start').addEventListener('click', ()=>{
   const studentNumber = document.querySelector("#studentNumber").value;
-  if(studentNumber === ""){
+  const studentUpperlimit = 50;
+  const studentNumberIsEmpty = studentNumber === "";
+  if(studentNumberIsEmpty){
     alert('人数が未入力です！入力してからスタートボタンを押してください。');
     return false;
   }
 
-  if(studentNumber > 50){
-    alert('人数は50人以内に設定してください!');
+  if(studentNumber > studentUpperlimit){
+    alert('人数は${studentUpperlimit}人以内に設定してください!');
     return false;
   }
   document.querySelector('.c-overlay').classList.add("is-closed");
 
-  setTargetStudents(studentNumber);
 
-  timer = setInterval(function(){
-    shuffleArray();
-    showSeatBoxes();
+  const studentNumberList = setTargetStudents(studentNumber);
+  const timer = setInterval(()=>{
+    const shuffleStudent = shuffleArray(studentNumberList);
+    showSeatBoxes(shuffleStudent);
   },50);
 
-  soundPlay();
+  soundPlay(timer);
 });
