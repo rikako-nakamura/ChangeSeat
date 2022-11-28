@@ -1,18 +1,32 @@
 let timer;
-const studentNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,18];
+let studentNumberList = [];
+
+const setTargetStudents = function(studentNumber){
+  for(let i = 1; i <= studentNumber;i++){
+    studentNumberList.push(i);
+  }
+  const absenteeNumbers = document.querySelector("#absence").value;
+  const splitedAbsenteeNumbers = absenteeNumbers.split(",").map(function(item, index){
+    return parseInt(item);
+  });
+
+  studentNumberList = studentNumberList.filter(function(student){
+    return !splitedAbsenteeNumbers.includes(student);
+  })
+}
 
 const shuffleArray = function(){
-  for(let i = studentNumbers.length; i> 0; i--){
+  for(let i = studentNumberList.length; i > 0; i--){
     const randomNum = Math.floor(Math.random() * i);
-    let tmp = studentNumbers[i-1];
-    studentNumbers[i-1] = studentNumbers[randomNum];
-    studentNumbers[randomNum] = tmp;
+    let tmp = studentNumberList[i - 1];
+    studentNumberList[i - 1] = studentNumberList[randomNum];
+    studentNumberList[randomNum] = tmp;
   }
 }
 
 const showSeatBoxes = function(){
   let insertHTML = '';
-  studentNumbers.forEach(function(num){
+  studentNumberList.forEach(function(num){
     insertHTML += '<div class="seat__item">' + num + '</div>';
   })
   document.querySelector('#seat').innerHTML = insertHTML;
@@ -29,10 +43,16 @@ const soundPlay = function(){
 }
 
 document.querySelector('#btn-start').addEventListener('click', function(){
-timer = setInterval(function(){
-  shuffleArray();
-  showSeatBoxes();
-},50);
+  const studentNumber = document.querySelector("#studentNumber").value;
 
-soundPlay();
+  document.querySelector('.c-overlay').classList.add("is-closed");
+
+  setTargetStudents(studentNumber);
+
+  timer = setInterval(function(){
+    shuffleArray();
+    showSeatBoxes();
+  },50);
+
+  soundPlay();
 });
