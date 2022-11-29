@@ -147,6 +147,9 @@ function createList(){
         });
         table += `</table>`;
         section.innerHTML = table;
+
+        //円グラフの作成
+        createPieChart(rows);
     }
   }
 }
