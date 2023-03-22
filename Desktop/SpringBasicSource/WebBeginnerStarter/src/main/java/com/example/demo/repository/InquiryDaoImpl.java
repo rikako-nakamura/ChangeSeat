@@ -7,12 +7,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.Inquiry;
 
-/*
- * Add an annotation here
- */
+@Repository
 public class InquiryDaoImpl implements InquiryDao{
 
 	private final JdbcTemplate jdbcTemplate;
