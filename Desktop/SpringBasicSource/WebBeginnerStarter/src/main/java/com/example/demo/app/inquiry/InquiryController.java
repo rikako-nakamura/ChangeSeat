@@ -33,25 +33,25 @@ public class InquiryController {
 	public String index(Model model) {
 
 		List<Inquiry> list = inquiryService.getAll();
-		
-		Inquiry inquiry = new Inquiry();
-		inquiry.setId(10);
-		inquiry.setName("ri");
-		inquiry.setEmail("ri@test.com");
-		inquiry.setContents("Hello");
-		
-		inquiryService.update(inquiry);
+
+//		Inquiry inquiry = new Inquiry();
+//		inquiry.setId(10);
+//		inquiry.setName("ri");
+//		inquiry.setEmail("ri@test.com");
+//		inquiry.setContents("Hello");
+//
+//		inquiryService.update(inquiry);
 		//try {
 		//	inquiryService.update(inquiry);
 		//}catch(InquiryNotFoundException e) {
 		//	model.addAttribute("message", e);
 		//	return "error/CustomPage";
 		//}
-		
+
 		model.addAttribute("inquiryList", list);
 		model.addAttribute("title", "Inquiry Index");
 
-		return "inquiry/index";
+		return "inquiry/index_boot";
 	}
 
 	@GetMapping("/form")
@@ -60,13 +60,13 @@ public class InquiryController {
 			@ModelAttribute("complete") String complete) {
 		model.addAttribute("title", "Inquiry Form");
 
-		return "inquiry/form";
+		return "inquiry/form_boot";
 	}
 
 	@PostMapping("/form")
 	public String formGoBack(InquiryForm inquiryForm, Model model) {
 		model.addAttribute("title", "InquiryForm");
-		return "inquiry/form";
+		return "inquiry/form_boot";
 	}
 
 
@@ -77,10 +77,10 @@ public class InquiryController {
 
 		if(result.hasErrors()) {
 			model.addAttribute("title", "Inquiry Form");
-			return "inquiry/form";
+			return "inquiry/form_boot";
 		}
 		model.addAttribute("title", "Confirm Page");
-		return "inquiry/confirm";
+		return "inquiry/confirm_boot";
 	}
 
 	@PostMapping("/complete")
@@ -91,7 +91,7 @@ public class InquiryController {
 
 		if(result.hasErrors()) {
 			model.addAttribute("title", "InquiryForm");
-			return "inquiry/form";
+			return "inquiry/form_boot";
 		}
 
 		Inquiry inquiry = new Inquiry();
@@ -103,9 +103,9 @@ public class InquiryController {
 		inquiryService.save(inquiry);
 		redirectAttributes.addAttribute("complete", "Registerd!");
 
-		return "redirect:/inquiry/form";
+		return "redirect:/inquiry/form_boot";
 	}
-	
+
 	//@ExceptionHandler(InquiryNotFoundException.class)
 	//public String handleException(InquiryNotFoundException e, Model model) {
 	//	model.addAttribute("message", e);
