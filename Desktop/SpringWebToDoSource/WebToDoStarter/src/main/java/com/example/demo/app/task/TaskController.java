@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,10 +29,10 @@ public class TaskController {
 
     private final TaskService taskService;
 
+    @Autowired
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
-
 
     /**
      * タスクの一覧を表示します
@@ -43,10 +44,12 @@ public class TaskController {
     public String task(TaskForm taskForm, Model model) {
 
     	//新規登録か更新かを判断する仕掛け
+    	taskForm.setNewTask(true);
 
         //Taskのリストを取得する
+    	List<Task> list = taskService.findAll();
 
-        model.addAttribute("list", "");
+        model.addAttribute("list", list);
         model.addAttribute("title", "タスク一覧");
 
         return "task/index";
@@ -65,15 +68,18 @@ public class TaskController {
         BindingResult result,
         Model model) {
 
-        if (!result.hasErrors()) {
-        	//削除してください
-        	Task task = null;
-
         	//TaskFormのデータをTaskに格納
-
+//        	Task task = new Task();
+//        	task.setUserId(1);
+//        	task.setTypeId(taskForm.getTypeId());
+//        	task.setTitle(taskForm.getTitle());
+//            task.setDetail(taskForm.getDetail());
+//            task.setDeadline(taskForm.getDeadline());
+        	Task task = makeTask(taskForm, 0);
+        if (!result.hasErrors()) {
         	//一件挿入後リダイレクト
-
-            return "";
+        	taskService.insert(task);
+            return "redirect:/task";
         } else {
             taskForm.setNewTask(true);
             model.addAttribute("taskForm", taskForm);
@@ -98,12 +104,17 @@ public class TaskController {
         Model model) {
 
     	//Taskを取得(Optionalでラップ)
+    	Optional<Task> taskOpt = taskService.getTask(id);
 
         //TaskFormへの詰め直し
+    	Optional<TaskForm> taskFormOpt = taskOpt.map(t -> makeTaskForm(t));
 
         //TaskFormがnullでなければ中身を取り出し
+    	if(taskFormOpt.isPresent()) {
+    		taskForm = taskFormOpt.get();
+    	}
 
-        model.addAttribute("taskForm", "");
+        model.addAttribute("taskForm", taskForm);
         List<Task> list = taskService.findAll();
         model.addAttribute("list", list);
         model.addAttribute("taskId", id);
@@ -127,13 +138,16 @@ public class TaskController {
     	@RequestParam("taskId") int taskId,
     	Model model,
     	RedirectAttributes redirectAttributes) {
+      	//TaskFormのデータをTaskに格納
+        	Task task = makeTask(taskForm, taskId);
 
         if (!result.hasErrors()) {
-        	//TaskFormのデータをTaskに格納
 
         	//更新処理、フラッシュスコープの使用、リダイレクト（個々の編集ページ）
+        	taskService.update(task);
+        	redirectAttributes.addFlashAttribute("complete", "更新が完了しました");
 
-            return "" ;
+            return "redirect:/task/" + taskId ;
         } else {
             model.addAttribute("taskForm", taskForm);
             model.addAttribute("title", "タスク一覧");
@@ -153,8 +167,9 @@ public class TaskController {
     	Model model) {
 
     	//タスクを一件削除しリダイレクト
+    	taskService.deleteById(id);
 
-        return "";
+        return "redirect:/task";
     }
 
     /**
